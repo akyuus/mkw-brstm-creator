@@ -1,5 +1,5 @@
 # mkw-brstm-creator
-This utility automatically generates MKWii BRSTMs from youtube links. Made using [NAudio](https://github.com/naudio/NAudio) (multi-channel handling), [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) (youtube download feature), [FFMpeg.NET](https://github.com/cmxl/FFmpeg.NET) (ffmpeg wrapper for C#), and [VGAudio](https://github.com/Thealexbarney/VGAudio) (WAV to BRSTM conversion). 
+This utility automatically generates MKWii BRSTMs from youtube links. Made using [NAudio](https://github.com/naudio/NAudio) (multi-channel handling), [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) (youtube download feature), [FFmpeg.NET](https://github.com/cmxl/FFmpeg.NET) (ffmpeg wrapper for C#), and [VGAudio](https://github.com/Thealexbarney/VGAudio) (WAV to BRSTM conversion). 
 
 ## Dependencies
 You need to have [ffmpeg](https://ffmpeg.org/download.html) in your system path for the application to work. Additionally, the ffmpeg.exe binary needs to be located at **C:\Program Files (x86)\ffmpeg\bin\ffmpeg.exe**.
