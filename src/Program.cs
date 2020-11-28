@@ -9,14 +9,16 @@ namespace brstm_maker
     {
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Select a track:");
+            Console.WriteLine("*** AUTO BRSTM CREATOR V1 ***\n");
+            Console.WriteLine("Select a track:\n--------------------");
             
             foreach(KeyValuePair<string, string> kvp in Tracks.trackNames)
             {
-                Console.WriteLine(kvp.Key);
+                Console.WriteLine($"| {kvp.Key}");
             }
 
-            Console.WriteLine("--------");
+            Console.WriteLine("--------------------");
+            Console.Write("Track: ");
             string userSelection = Console.ReadLine();
             string trackFilename = "";
             try 
@@ -29,7 +31,7 @@ namespace brstm_maker
                 Environment.Exit(1);
             }
 
-            Console.WriteLine("Enter a YouTube URL or a .wav filename in the current directory: ");
+            Console.WriteLine("Enter a YouTube URL or a audio filename in the current directory: ");
             string input = Console.ReadLine();
             string path = "";
             if(input.Contains("http"))
@@ -46,7 +48,13 @@ namespace brstm_maker
                     Directory.CreateDirectory(current + "\\brstms");
                 }
                 path = current + "\\" + input;
+
+                if(!path.Substring(path.Length-3).Equals("wav"))
+                {
+                    path = await AudioHandler.convertToWav(path);
+                }
                 File.Move(path, current + "\\brstms\\" + trackFilename + "_temp.wav");
+                File.Delete(path);
                 path = current + "\\brstms\\" + trackFilename + "_temp.wav";
             }
             else
@@ -64,7 +72,7 @@ namespace brstm_maker
             string finalpath = AudioHandler.finalLapMaker(path, speedFactor);
             AudioHandler.convertToBrstm(path);
             AudioHandler.convertToBrstm(finalpath);
-            
+
         }
     }
 }

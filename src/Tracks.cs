@@ -8,10 +8,10 @@ namespace brstm_maker
     {
         public static readonly Dictionary<string, string> trackNames = new Dictionary<string, string>() 
         {
-            {"finish-first", "o_FanfareGP1_32.brstm"},
-            {"finish-ok", "o_FanfareGP2_32.brstm"},
-            {"finish-bad", "o_FanfareGPdame_32.brstm"},
-            {"race_intro_(wifi)", "o_Crs_In_Fan_Wifi.brstm"},
+            {"finish-first", "o_FanfareGP1_32"},
+            {"finish-ok", "o_FanfareGP2_32"},
+            {"finish-bad", "o_FanfareGPdame_32"},
+            {"race-intro-wifi", "o_Crs_In_Fan_Wifi"},
             {"lc", "n_circuit32_n"},
             {"mmm", "n_farm_n"},
             {"mg", "n_kinoko_n"},

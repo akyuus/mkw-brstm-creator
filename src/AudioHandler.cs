@@ -22,10 +22,11 @@ namespace brstm_maker
             {
                 string newpath = new string(path.Take(path.Length-3).ToArray());
                 newpath += "brstm";
+                handleExistingFile(newpath);
                 AudioData audio = new WaveReader().Read(fs); 
                 byte[] brstmFile = new BrstmWriter().GetFile(audio);
                 File.WriteAllBytes(newpath, brstmFile);
-                Console.WriteLine($"Converted: {path} --> {newpath}");
+                Console.WriteLine($"Converted: {path} \n --> {newpath}");
             }
         }
 
@@ -33,18 +34,19 @@ namespace brstm_maker
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_temp2.wav";
+            handleExistingFile(newpath);
             var inputFile = new MediaFile(path);
             var outputFile = new MediaFile(newpath);
 
             await ffmpeg.ConvertAsync(inputFile, outputFile);
-            Console.WriteLine($"Converted: {path} --> {newpath}");
+            Console.WriteLine($"Converted: {path} \n --> {newpath}");
             return newpath;
         }
         public static string adjustChannels(string path, int outputChannels) 
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + ".wav";
-
+            handleExistingFile(newpath);
             if(outputChannels == 2) 
             {
                 File.Move(path, newpath);
@@ -67,7 +69,7 @@ namespace brstm_maker
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_temp3.wav";;
-
+            handleExistingFile(newpath);
             ProcessStartInfo processInfo = new ProcessStartInfo("ffmpeg")
             {
                 ArgumentList = {
@@ -91,7 +93,8 @@ namespace brstm_maker
         public static string finalLapMaker(string path, double factor) 
         {
             int indexof = path.LastIndexOf('_');
-            string newpath = path.Substring(0, indexof) + "_f.wav";;
+            string newpath = path.Substring(0, indexof) + "_f.wav";
+            handleExistingFile(newpath);
             if(Char.IsUpper(path[indexof+1])) 
             {
                 newpath = path.Substring(0, indexof) + "_F.wav";
@@ -117,6 +120,11 @@ namespace brstm_maker
             process.Close();
 
             return newpath;
+        }
+
+        public static void handleExistingFile(string path)
+        {
+            if(File.Exists(path)) File.Delete(path);
         }
     }
 }
