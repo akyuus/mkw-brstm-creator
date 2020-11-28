@@ -67,11 +67,20 @@ namespace brstm_maker
             int decibelIncrease = Int32.Parse(Console.ReadLine());
             path = AudioHandler.adjustVolume(path, decibelIncrease);
             path = AudioHandler.adjustChannels(path, Tracks.getChannelCount(userSelection));
-            Console.WriteLine("Speed factor for final lap? (Enter a value from 1.05-1.30)");
-            double speedFactor = Double.Parse(Console.ReadLine());            
-            string finalpath = AudioHandler.finalLapMaker(path, speedFactor);
-            AudioHandler.convertToBrstm(path);
-            AudioHandler.convertToBrstm(finalpath);
+
+            if(!userSelection.Contains('-'))
+            {
+                Console.WriteLine("Speed factor for final lap? (Enter a value from 1.05-1.30)");
+                double speedFactor = Double.Parse(Console.ReadLine());            
+                string finalpath = AudioHandler.finalLapMaker(path, speedFactor);
+
+                AudioHandler.convertToBrstm(path);
+                AudioHandler.convertToBrstm(finalpath);
+            }
+            else
+            {
+                AudioHandler.convertToBrstm(path);
+            }
 
         }
     }
