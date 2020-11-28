@@ -3,7 +3,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
-using NYoutubeDL;
+using YoutubeExplode;
+using YoutubeExplode.Videos.Streams;
 
 namespace brstm_maker 
 {
@@ -16,7 +17,7 @@ namespace brstm_maker
         /// <param name="url"></param>
         /// <param name="trackFilename"></param>
         /// <returns>The path of the file created</returns>
-        public static string downloadAudio(string url, string trackFilename)
+        public async static Task<string> downloadAudio(string id, string trackFilename)
         {
             string current = Directory.GetCurrentDirectory();
             if(!Directory.Exists(current + $"\\brstms)"))
@@ -24,29 +25,26 @@ namespace brstm_maker
                 Directory.CreateDirectory(current + "\\brstms");
             }
 
-            string path = current + $"\\brstms\\{trackFilename}_temp" + ".wav";
+            var youtube = new YoutubeClient();
+            var streamManifest = await youtube.Videos.Streams.GetManifestAsync(id);
+            var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
+            string path = current + $"\\brstms\\{trackFilename}_temp.{streamInfo.Container}";
+
             if(File.Exists(path)) {
                 File.Delete(path);
             }
-            ProcessStartInfo processInfo = new ProcessStartInfo("youtube-dl")
+            
+            if (streamInfo != null)
             {
-                ArgumentList = {
-                    "-x",
-                    "--audio-format",
-                    "wav",
-                    "-o",
-                    $"{current}\\brstms\\{trackFilename}_temp.%(ext)s",
-                    url
-                }
-            };
-            processInfo.CreateNoWindow = true;
-            processInfo.RedirectStandardError = true;
-            processInfo.RedirectStandardOutput = true;
-            var process = Process.Start(processInfo);
-            Console.WriteLine("Downloading...");
-            process.WaitForExit();
-            process.Close();
-            Console.WriteLine("Finished downloading.");
+                // Get the actual stream
+                var stream = await youtube.Videos.Streams.GetAsync(streamInfo);
+
+                // Download the stream to file
+                Console.WriteLine("Downloading...");
+                await youtube.Videos.Streams.DownloadAsync(streamInfo, path);
+                Console.WriteLine($"Downloaded to {path}");
+            }
+
             return path;
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
 using System.IO;
@@ -9,11 +10,12 @@ using VGAudio.Containers.Wave;
 using VGAudio.Containers.NintendoWare;
 using NAudio;
 using NAudio.Wave;
-
+using FFmpeg.NET;
 namespace brstm_maker 
 {
     class AudioHandler
     {
+        private static readonly Engine ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
         public static void convertToBrstm(string path) 
         {
             using (FileStream fs = File.OpenRead(path)) 
@@ -23,10 +25,21 @@ namespace brstm_maker
                 AudioData audio = new WaveReader().Read(fs); 
                 byte[] brstmFile = new BrstmWriter().GetFile(audio);
                 File.WriteAllBytes(newpath, brstmFile);
-                Console.WriteLine($"Done converting {path} to brstm");
+                Console.WriteLine($"Converted: {path} --> {newpath}");
             }
         }
 
+        public async static Task<string> convertToWav(string path) 
+        {
+            int indexof = path.LastIndexOf('_');
+            string newpath = path.Substring(0, indexof) + "_temp2.wav";
+            var inputFile = new MediaFile(path);
+            var outputFile = new MediaFile(newpath);
+
+            await ffmpeg.ConvertAsync(inputFile, outputFile);
+            Console.WriteLine($"Converted: {path} --> {newpath}");
+            return newpath;
+        }
         public static string adjustChannels(string path, int outputChannels) 
         {
             int indexof = path.LastIndexOf('_');
@@ -53,7 +66,7 @@ namespace brstm_maker
         public static string adjustVolume(string path, int dBnum) 
         {
             int indexof = path.LastIndexOf('_');
-            string newpath = path.Substring(0, indexof) + "_temp2.wav";;
+            string newpath = path.Substring(0, indexof) + "_temp3.wav";;
 
             ProcessStartInfo processInfo = new ProcessStartInfo("ffmpeg")
             {
@@ -75,7 +88,7 @@ namespace brstm_maker
             Console.WriteLine(newpath);
             return newpath;
         }
-        public static string finalLapMaker(string path) 
+        public static string finalLapMaker(string path, double factor) 
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_f.wav";;
@@ -91,7 +104,7 @@ namespace brstm_maker
                     "-i",
                     path,
                     "-filter:a",
-                    "atempo=1.15",
+                    $"atempo={factor}",
                     "-vn",
                     newpath
                 }
