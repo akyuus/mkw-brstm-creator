@@ -1,10 +1,10 @@
 # mkw-brstm-creator
-This utility automatically generates MKWii BRSTMs from youtube links. Made using [NAudio](https://github.com/naudio/NAudio) (multi-channel handling), [NYoutubeDL](https://gitlab.com/BrianAllred/NYoutubeDL) (youtube-dl library for C#), and [VGAudio](https://github.com/Thealexbarney/VGAudio) (WAV to BRSTM conversion). 
+This utility automatically generates MKWii BRSTMs from youtube links. Made using [NAudio](https://github.com/naudio/NAudio) (multi-channel handling), [YoutubeExplode](https://github.com/Tyrrrz/YoutubeExplode) (youtube download feature), [FFMpeg.NET](https://github.com/cmxl/FFmpeg.NET) (ffmpeg wrapper for C#), and [VGAudio](https://github.com/Thealexbarney/VGAudio) (WAV to BRSTM conversion). 
 
 ## Dependencies
-You need to have [youtube-dl](https://youtube-dl.org/) and [ffmpeg](https://ffmpeg.org/download.html) in your system path for the application to work.
+You need to have [ffmpeg](https://ffmpeg.org/download.html) in your system path for the application to work. Additionally, the ffmpeg.exe binary needs to be located at **C:\Program Files (x86)\ffmpeg\bin\ffmpeg.exe**.
 
 ## Usage
-I recommend running the project with `dotnet run`. Afterwards, select the track you'd like to create a BRSTM for and paste a youtube link to your song when prompted. The resulting BRSTMs will be placed in `.\brstms`. 
+I recommend running the project with `dotnet run`, or using the binary in the releases section. Afterwards, select the track you'd like to create a BRSTM for and paste a youtube link to your song when prompted. The resulting BRSTMs will be placed in `.\brstms`. 
 
-By default, the application will increase the volume by **7 dB** and speed up the song by a factor of **1.15** for the final lap. I plan on adding more customization in the future.  
+The application will allow you to increase the volume by a factor of 0-10 dB and speed up the song for the final lap, using a multiplier from 1.05-1.30 inclusive. I plan on adding additional customization features in the future. 
