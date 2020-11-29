@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Windows;
 using System.Threading.Tasks;
 using System.IO;
 using YoutubeExplode;
@@ -19,16 +20,23 @@ namespace brstm_maker
         /// <returns>The path of the file created</returns>
         public async static Task<string> downloadAudio(string id, string trackFilename)
         {
-            string current = Directory.GetCurrentDirectory();
-            if(!Directory.Exists(current + $"\\brstms)"))
+
+            string current = System.AppContext.BaseDirectory;
+            
+            if(!Directory.GetCurrentDirectory().Contains("system32"))
             {
-                Directory.CreateDirectory(current + "\\brstms");
+                current = Directory.GetCurrentDirectory() + "\\";
+            }
+
+            if(!Directory.Exists(current + $"brstms)"))
+            {
+                Directory.CreateDirectory(current + "brstms");
             }
 
             var youtube = new YoutubeClient();
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(id);
             var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
-            string path = current + $"\\brstms\\{trackFilename}_temp.{streamInfo.Container}";
+            string path = current + $"brstms\\{trackFilename}_temp.{streamInfo.Container}";
 
             if(File.Exists(path)) {
                 File.Delete(path);

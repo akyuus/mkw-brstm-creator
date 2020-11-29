@@ -11,6 +11,7 @@ using VGAudio.Containers.NintendoWare;
 using NAudio;
 using NAudio.Wave;
 using FFmpeg.NET;
+
 namespace brstm_maker 
 {
     class AudioHandler
@@ -70,7 +71,7 @@ namespace brstm_maker
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_temp3.wav";;
             handleExistingFile(newpath);
-            ProcessStartInfo processInfo = new ProcessStartInfo("ffmpeg")
+            ProcessStartInfo processInfo = new ProcessStartInfo("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe")
             {
                 ArgumentList = {
                     "-i",
@@ -80,6 +81,7 @@ namespace brstm_maker
                     newpath
                 }
             };
+
             processInfo.CreateNoWindow = true;
             processInfo.RedirectStandardError = true;
             processInfo.RedirectStandardOutput = true;
@@ -101,7 +103,7 @@ namespace brstm_maker
             }
             
 
-            ProcessStartInfo processInfo = new ProcessStartInfo("ffmpeg")
+            ProcessStartInfo processInfo = new ProcessStartInfo("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe")
             {
                 ArgumentList = {
                     "-i",
