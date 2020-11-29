@@ -45,6 +45,7 @@ namespace brstm_maker
             {"rws", "r_gc_stadium32_n"},
             {"rdh", "r_ds_desert32_n"},
             {"bc3", "r_agb_kuppa32_n"},
+            {"dkjp", "r_64_jungle32_n"},
             {"rmc", "r_gc_circuit32_n"},
             {"mc3", "r_sfc_circuit32_n"},
             {"rpg", "r_ds_garden32_n"},
