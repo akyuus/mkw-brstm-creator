@@ -95,6 +95,7 @@ namespace brstm_maker
             Console.WriteLine("How much do you want to increase the volume? (Enter a value from 0-10 (dB))");
             int decibelIncrease = Int32.Parse(Console.ReadLine());
             path = AudioHandler.adjustVolume(path, decibelIncrease);
+            string twochannelpath = path;
             path = AudioHandler.adjustChannels(path, Tracks.getChannelCount(userSelection));
 
             if(!userSelection.Contains('-'))
@@ -115,16 +116,17 @@ namespace brstm_maker
                     {
                         endTime = Int32.Parse(end);
                     }
-
+                    else
+                    {
+                        endTime = startTime + 300;
+                    }
                     try
                     {
                         int indexof = path.LastIndexOf('\\');
-                        finalpath = path.Substring(0, indexof) + "\\" + trackFilename.Substring(0, trackFilename.Length-2) + "_f.wav"; 
-                        File.Copy(path, finalpath);
+                        finalpath = path.Substring(0, indexof) + "\\" + trackFilename.Substring(0, trackFilename.Length-2) + "_f1_.wav"; 
+                        File.Copy(twochannelpath, finalpath);
                         finalpath = (await AudioHandler.cutAudio(finalpath, startTime, endTime));
-                        string newfinalpath = finalpath.Substring(0, finalpath.Length-8) + "_f1.wav";
-                        File.Copy(finalpath, newfinalpath);
-                        finalpath = newfinalpath;
+                        finalpath = AudioHandler.adjustChannels(finalpath, Tracks.getChannelCount(userSelection));
                     }
                     catch(Exception e)
                     {
@@ -138,6 +140,7 @@ namespace brstm_maker
                 {
                     finalpath = path;
                 }
+                
                 finalpath = AudioHandler.finalLapMaker(finalpath, speedFactor);
                 AudioHandler.convertToBrstm(path);
                 AudioHandler.convertToBrstm(finalpath);
@@ -149,7 +152,8 @@ namespace brstm_maker
 
             foreach(string file in Directory.EnumerateFiles(@".\brstms"))
             {
-                if(file.EndsWith("cut.wav") || file.EndsWith("f1.wav")) File.Delete(file);
+                string filecheck = file.ToLower();
+                if(filecheck.EndsWith(".wav") && !filecheck.EndsWith($"_n.wav") && !filecheck.EndsWith("_f.wav")) File.Delete(file);
             }
             Console.WriteLine($"Finished. Your brstms are here: {Directory.GetParent(path)}");
 
@@ -303,6 +307,10 @@ namespace brstm_maker
                     if(!string.IsNullOrEmpty(end))
                     {
                         endTime = Int32.Parse(end);
+                    }
+                    else
+                    {
+                        endTime = startTime + 300;
                     }
 
                     try

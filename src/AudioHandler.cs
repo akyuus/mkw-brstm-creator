@@ -52,7 +52,6 @@ namespace brstm_maker
             if(outputChannels == 2) 
             {
                 File.Move(path, newpath);
-                File.Delete(path);
                 return newpath;
             }
             
@@ -63,7 +62,6 @@ namespace brstm_maker
                 WaveFileWriter.CreateWaveFile(newpath, waveProvider);
             }
             
-            File.Delete(path);
             return newpath;
         }
 
@@ -88,7 +86,6 @@ namespace brstm_maker
             var process = Process.Start(processInfo);
             process.WaitForExit();
             process.Close();
-            File.Delete(path);
             return newpath;
         }
 
@@ -104,23 +101,23 @@ namespace brstm_maker
             if(startTime > endTime) throw new InvalidDataException(message: "ERROR: Start time cannot be greater than end time.");
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_cut.wav";
-            handleExistingFile(newpath);
             var inputFile = new MediaFile(path);
             var outputFile = new MediaFile(newpath);
             var options = new ConversionOptions();
             options.CutMedia(TimeSpan.FromSeconds(startTime), TimeSpan.FromSeconds(endTime - startTime));
             await ffmpeg.ConvertAsync(inputFile, outputFile, options);
+            Console.WriteLine(File.Exists(path));
+            Console.WriteLine(File.Exists(newpath));
             Console.WriteLine($"Cut {path} @ {startTime} seconds\n--> {newpath}");
-            File.Delete(path);
             return newpath;
         }
         public static string finalLapMaker(string path, double factor) 
         {
             
+            
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_f.wav";
-            handleExistingFile(newpath);
-            if(Char.IsUpper(path[indexof+1])) 
+            if(Char.IsUpper(path[0])) 
             {
                 newpath = path.Substring(0, indexof) + "_F.wav";
             }
