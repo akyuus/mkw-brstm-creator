@@ -106,8 +106,6 @@ namespace brstm_maker
             var options = new ConversionOptions();
             options.CutMedia(TimeSpan.FromSeconds(startTime), TimeSpan.FromSeconds(endTime - startTime));
             await ffmpeg.ConvertAsync(inputFile, outputFile, options);
-            Console.WriteLine(File.Exists(path));
-            Console.WriteLine(File.Exists(newpath));
             Console.WriteLine($"Cut {path} @ {startTime} seconds\n--> {newpath}");
             return newpath;
         }

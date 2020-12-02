@@ -156,7 +156,8 @@ namespace brstm_maker
                 if(filecheck.EndsWith(".wav") && !filecheck.EndsWith($"_n.wav") && !filecheck.EndsWith("_f.wav")) File.Delete(file);
             }
             Console.WriteLine($"Finished. Your brstms are here: {Directory.GetParent(path)}");
-
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
 
         /// <summary>
