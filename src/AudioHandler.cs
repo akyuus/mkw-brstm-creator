@@ -48,10 +48,9 @@ namespace brstm_maker
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + ".wav";
-            handleExistingFile(newpath);
             if(outputChannels == 2) 
             {
-                File.Move(path, newpath);
+                File.Copy(path, newpath);
                 return newpath;
             }
             
@@ -115,7 +114,7 @@ namespace brstm_maker
             
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_f.wav";
-            if(Char.IsUpper(path[0])) 
+            if(Char.IsUpper(path[indexof+1])) 
             {
                 newpath = path.Substring(0, indexof) + "_F.wav";
             }

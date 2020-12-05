@@ -61,36 +61,6 @@ namespace brstm_maker
                 Environment.Exit(1);
             }
 
-            /*
-            if(input.Contains("http"))
-            {
-                string id = input.Split('=')[1];
-                path = await YoutubeHandler.downloadAudio(id, trackFilename);
-                path = await AudioHandler.convertToWav(path);
-            }
-            else if(File.Exists($".\\{input}"))
-            {
-                string current = Directory.GetCurrentDirectory();
-                if(!Directory.Exists(current + "\\brstms"))
-                {
-                    Directory.CreateDirectory(current + "\\brstms");
-                }
-                path = current + "\\" + input;
-
-                if(!path.Substring(path.Length-3).Equals("wav"))
-                {
-                    path = await AudioHandler.convertToWav(path);
-                }
-                File.Move(path, current + "\\brstms\\" + trackFilename + "_temp.wav");
-                File.Delete(path);
-                path = current + "\\brstms\\" + trackFilename + "_temp.wav";
-            }
-            else
-            {
-                Console.WriteLine("Something went wrong. That file either doesn't exist, or you just inputted garbage.");
-                Environment.Exit(1);
-            }
-            */
 
             Console.WriteLine("How much do you want to increase the volume? (Enter a value from 0-10 (dB))");
             int decibelIncrease = Int32.Parse(Console.ReadLine());
