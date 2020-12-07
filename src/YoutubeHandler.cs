@@ -34,6 +34,7 @@ namespace brstm_maker
             }
 
             var youtube = new YoutubeClient();
+            var video = await youtube.Videos.GetAsync(id);
             var streamManifest = await youtube.Videos.Streams.GetManifestAsync(id);
             var streamInfo = streamManifest.GetAudioOnly().WithHighestBitrate();
             string path = current + $"brstms\\{trackFilename}_temp.{streamInfo.Container}";
