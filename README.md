@@ -7,4 +7,6 @@ The ffmpeg.exe binary needs to be located at **C:\Program Files (x86)\ffmpeg\bin
 ## Usage
 I recommend running the project with `dotnet run`, or using the binary in the releases section. Afterwards, select the track you'd like to create a BRSTM for and paste a youtube link to your song when prompted. The resulting BRSTMs will be placed in `.\brstms`. 
 
-The application will allow you to increase the volume by a factor of 0-10 dB and speed up the song for the final lap, using a multiplier from 1.05-1.30 inclusive. I plan on adding additional customization features in the future. 
+The application will allow you to increase the volume by a factor of 0-10 dB and speed up the song for the final lap, using a multiplier from 1.00-1.30 inclusive. You can also cut the song when prompted.
+
+[Here](https://youtu.be/dDkJ6SXd_gA) is a short video on installation and usage. 
