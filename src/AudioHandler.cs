@@ -19,16 +19,21 @@ namespace brstm_maker
         private static readonly Engine ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
         public static void convertToBrstm(string path) 
         {
-            using (FileStream fs = File.OpenRead(path)) 
+            WaveStructure structure;
+            WaveReader reader = new WaveReader();
+            byte[] fs = File.ReadAllBytes(path);
+            string newpath = new string(path.Take(path.Length-3).ToArray());
+            newpath += "brstm";
+            handleExistingFile(newpath);
+            using(FileStream stream = File.OpenRead(path))
             {
-                string newpath = new string(path.Take(path.Length-3).ToArray());
-                newpath += "brstm";
-                handleExistingFile(newpath);
-                AudioData audio = new WaveReader().Read(fs); 
-                byte[] brstmFile = new BrstmWriter().GetFile(audio);
-                File.WriteAllBytes(newpath, brstmFile);
-                Console.WriteLine($"Converted: {path} \n       --> {newpath}");
+                structure = reader.ReadMetadata(stream);
             }
+            AudioData audio = reader.Read(fs); 
+            audio.SetLoop(true, 0, structure.SampleCount);
+            byte[] brstmFile = new BrstmWriter().GetFile(audio);
+            File.WriteAllBytes(newpath, brstmFile);
+            Console.WriteLine($"Converted: {path} \n       --> {newpath}");
         }
 
         public async static Task<string> convertToWav(string path) 
