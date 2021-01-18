@@ -11,6 +11,8 @@ using VGAudio.Containers.NintendoWare;
 using NAudio;
 using NAudio.Wave;
 using FFmpeg.NET;
+using SoundTouch;
+using SoundTouch.Net.NAudioSupport;
 
 namespace brstm_maker 
 {
@@ -19,16 +21,34 @@ namespace brstm_maker
         private static readonly Engine ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
         public static void convertToBrstm(string path) 
         {
+            using(var input = new WaveFileReader(path))
+            {
+                if(input.WaveFormat.Encoding != WaveFormatEncoding.Pcm)
+                {
+                    string temppath = "temp.wav";
+                    var outFormat = new WaveFormat(input.WaveFormat.SampleRate, input.WaveFormat.Channels);
+                    using (var resampler = new MediaFoundationResampler(input, outFormat))
+                    {
+                        // resampler.ResamplerQuality = 48;
+                        WaveFileWriter.CreateWaveFile(temppath, resampler);
+                    }
+                }
+            }
+
+            if(File.Exists("temp.wav"))
+            {
+                File.Delete(path);
+                File.Move("temp.wav", path);
+            }
+
             WaveStructure structure;
             WaveReader reader = new WaveReader();
             byte[] fs = File.ReadAllBytes(path);
             string newpath = new string(path.Take(path.Length-3).ToArray());
             newpath += "brstm";
             handleExistingFile(newpath);
-            using(FileStream stream = File.OpenRead(path))
-            {
-                structure = reader.ReadMetadata(stream);
-            }
+            Stream stream = new MemoryStream(fs);
+            structure = reader.ReadMetadata(stream);
             AudioData audio = reader.Read(fs); 
             audio.SetLoop(true, 0, structure.SampleCount);
             byte[] brstmFile = new BrstmWriter().GetFile(audio);
@@ -73,23 +93,14 @@ namespace brstm_maker
         {
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_tempVOL.wav";
-            ProcessStartInfo processInfo = new ProcessStartInfo("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe")
-            {
-                ArgumentList = {
-                    "-i",
-                    path,
-                    "-filter:a",
-                    $"volume={dBnum}dB",
-                    newpath
-                }
-            };
+            double percentage = Math.Pow(10, ((double)dBnum)/10);
 
-            processInfo.CreateNoWindow = true;
-            processInfo.RedirectStandardError = true;
-            processInfo.RedirectStandardOutput = true;
-            var process = Process.Start(processInfo);
-            process.WaitForExit();
-            process.Close();
+            using(var reader = new WaveFileReader(path))
+            {
+                var volumeProvider = new VolumeWaveProvider16(reader);
+                volumeProvider.Volume = (float)percentage;
+                WaveFileWriter.CreateWaveFile(newpath, volumeProvider);
+            }
             return newpath;
         }
 
@@ -121,7 +132,6 @@ namespace brstm_maker
         public static string finalLapMaker(string path, double factor) 
         {
             
-            
             int indexof = path.LastIndexOf('_');
             string newpath = path.Substring(0, indexof) + "_f.wav";
             if(Char.IsUpper(path[indexof+1])) 
@@ -129,25 +139,24 @@ namespace brstm_maker
                 newpath = path.Substring(0, indexof) + "_F.wav";
             }
             
-            
-            ProcessStartInfo processInfo = new ProcessStartInfo("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe")
-            {
-                ArgumentList = {
-                    "-i",
-                    path,
-                    "-filter:a",
-                    $"atempo={factor}",
-                    "-vn",
-                    newpath
-                }
-            };
-            processInfo.CreateNoWindow = true;
-            processInfo.RedirectStandardError = true;
-            processInfo.RedirectStandardOutput = true;
-            var process = Process.Start(processInfo);
-            process.WaitForExit();
-            process.Close();
+            string temppath = path.Substring(0, indexof) + "_ieeetemp.wav";
 
+            using (var reader = new WaveFileReader(path))
+            {
+                var outFormat = WaveFormat.CreateIeeeFloatWaveFormat(reader.WaveFormat.SampleRate, reader.WaveFormat.Channels);
+                using (var resampler = new MediaFoundationResampler(reader, outFormat))
+                {
+                    WaveFileWriter.CreateWaveFile(temppath, resampler);
+                }
+            }
+
+            using(var input = new WaveFileReader(temppath))
+            {
+                var stwp = new SoundTouchWaveProvider(input);
+                stwp.Tempo = factor;
+                WaveFileWriter.CreateWaveFile(newpath, stwp);
+            }
+            
             return newpath;
         }
 
@@ -163,6 +172,7 @@ namespace brstm_maker
             int duration = (allBytes.Length - 8) / byterate;
             return duration;
         }
+        
         public static void handleExistingFile(string path)
         {
             if(File.Exists(path)) File.Delete(path);

@@ -112,6 +112,7 @@ namespace brstm_maker
                 }
                 
                 finalpath = AudioHandler.finalLapMaker(finalpath, speedFactor);
+                Console.WriteLine("Converting...");
                 AudioHandler.convertToBrstm(path);
                 AudioHandler.convertToBrstm(finalpath);
             }
@@ -127,7 +128,7 @@ namespace brstm_maker
             }
             Console.WriteLine($"Finished. Your brstms are here: {Directory.GetParent(path)}");
             Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            Console.ReadKey(intercept:true);
         }
 
         /// <summary>
