@@ -13,12 +13,33 @@ using NAudio.Wave;
 using FFmpeg.NET;
 using SoundTouch;
 using SoundTouch.Net.NAudioSupport;
+using System.Text.RegularExpressions;
 
 namespace brstm_maker 
 {
     class AudioHandler
     {
-        private static readonly Engine ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
+        private static Engine ffmpeg;
+        public static void initializeEngine()
+        {
+            foreach(string str in Directory.GetFiles(Directory.GetCurrentDirectory()))
+            {
+                Console.WriteLine(str);
+            }
+            if(Directory.Exists("C:\\Program Files (x86)\\ffmpeg\\bin\\"))
+            {
+                ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
+            }
+            else if(Directory.GetFiles(Directory.GetCurrentDirectory()).Any(str => Regex.IsMatch(str, ".*ffmpeg.exe")))
+            {
+                ffmpeg = new Engine($"{Directory.GetCurrentDirectory()}\\ffmpeg.exe");
+            }
+            else
+            {
+                string errorMessage = $"ERROR: ffmpeg.exe was not found in the C:\\Program Files (x86)\\ffmpeg\\bin directory, or {Directory.GetCurrentDirectory()}. Exiting...";
+                throw new FileNotFoundException(message: errorMessage);
+            }
+        }
         public static void convertToBrstm(string path) 
         {
             using(var input = new WaveFileReader(path))

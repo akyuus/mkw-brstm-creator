@@ -12,6 +12,7 @@ namespace brstm_maker
     {
         public static async Task Main(string[] args)
         {
+            AudioHandler.initializeEngine();
             Console.WriteLine("*** AUTO BRSTM CREATOR V1 ***\n");
             Console.WriteLine("Select a track:\n--------------------");
 
