@@ -12,7 +12,7 @@
     <PackageReference Include="SoundTouch.Net.NAudioSupport" Version="2.2.0" />
     <PackageReference Include="VGAudio" Version="2.2.1" />
     <PackageReference Include="xFFmpeg.NET" Version="3.4.0" />
-    <PackageReference Include="YoutubeExplode" Version="5.1.9" />
+    <PackageReference Include="YoutubeExplode" Version="6.0.1" />
   </ItemGroup>
 
 </Project>

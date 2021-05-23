@@ -12,7 +12,16 @@ namespace brstm_maker
     {
         public static async Task Main(string[] args)
         {
-            AudioHandler.initializeEngine();
+            try
+            {
+                AudioHandler.initializeEngine();
+            }
+            catch (FileNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadKey(intercept: true);
+                Environment.Exit(1);
+            }
             Console.WriteLine("*** AUTO BRSTM CREATOR V1 ***\n");
             Console.WriteLine("Select a track:\n--------------------");
 
@@ -149,8 +158,9 @@ namespace brstm_maker
             {
                 path = await YoutubeHandler.downloadAudio(videoId, trackFilename);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 Console.WriteLine("Something went wrong when trying to get your YouTube link. This could be a problem on their end.");
                 Console.WriteLine("Press any key to exit...");
                 Console.ReadKey(intercept: true);

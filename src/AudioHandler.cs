@@ -22,10 +22,6 @@ namespace brstm_maker
         private static Engine ffmpeg;
         public static void initializeEngine()
         {
-            foreach(string str in Directory.GetFiles(Directory.GetCurrentDirectory()))
-            {
-                Console.WriteLine(str);
-            }
             if(Directory.Exists("C:\\Program Files (x86)\\ffmpeg\\bin\\"))
             {
                 ffmpeg = new Engine("C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe");
