@@ -52,7 +52,18 @@ namespace brstm_maker
             {"gardens", "r_ds_garden32_n"},
             {"dkm", "r_gc_mountain32_n"},
             {"rbc", "r_64_kuppa32_n"},
-            {"FORT", "r_64_kuppa32_n"}
+            {"FORT", "r_64_kuppa32_n"},
+            {"delfino-pier", "n_venice_n"},
+            {"funky-stadium", "n_skate_n"},
+            {"n64-skyscraper", "r_64_battle_n"},
+            {"gba-battle-course-3", "r_agb_battle_n"},
+            {"ds-twilight-house", "r_DS_battle_n"},
+            {"snes-battle-course-4", "r_sfc_battle_n"},
+            {"block-plaza", "n_block_n"},
+            {"chainchomp-roulette", "n_casino_n"},
+            {"gcn-cookieland", "r_GC_Battle32_n"},
+            {"thwomp-desert", "n_ryuusa_n"},
+            {"galaxy colosseum", "n_BossMI"},
         };
 
         //maps the relevant key above to the number of channels they need in their brstm (ex. "kc" gets mapped to 8)
