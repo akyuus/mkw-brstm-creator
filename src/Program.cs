@@ -23,121 +23,127 @@ namespace brstm_maker
                 Environment.Exit(1);
             }
             Console.WriteLine("*** AUTO BRSTM CREATOR V1 ***\n");
-            Console.WriteLine("Select a track:\n--------------------");
-
-            foreach(KeyValuePair<string, string> kvp in Tracks.trackNames)
+            string cont = "";
+            do
             {
-                Console.WriteLine($"| {kvp.Key}");
-            }
+                Console.WriteLine("Select a track:\n--------------------");
 
-            Console.WriteLine("--------------------");
-            Console.Write("Track: ");
-            string userSelection = Console.ReadLine();
-            string trackFilename = "";
-            try 
-            {
-                trackFilename = Tracks.getFilename(userSelection);
-            }
-            catch(System.ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey(intercept: true);
-                Environment.Exit(1);
-            }
-
-            string current = System.AppContext.BaseDirectory;
-            
-            if(!Directory.GetCurrentDirectory().Contains("system32"))
-            {
-                current = Directory.GetCurrentDirectory();
-            }
-
-            int choice = 0;
-            string path = "";
-            string finalpath = "";
-            Console.WriteLine("Enter an input method:\n [1] Youtube URL\n [2] Audio file");
-
-            try
-            {
-                choice = Int32.Parse(Console.ReadLine());
-                path = (choice == 1) ? await youtubeURLCase(trackFilename) : (choice == 2) ? await audioFileCase(trackFilename, Directory.EnumerateFiles(current).ToList()) : throw new InvalidDataException("Invalid input.");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Press any key to exit...");
-                Console.ReadKey(intercept: true);
-                Environment.Exit(1);
-            }
-
-
-            Console.WriteLine("How much do you want to increase the volume? (Enter a value from 0-10 (dB))");
-            int decibelIncrease = Int32.Parse(Console.ReadLine());
-            path = AudioHandler.adjustVolume(path, decibelIncrease);
-            string twochannelpath = path;
-            path = AudioHandler.adjustChannels(path, Tracks.getChannelCount(userSelection));
-
-            if(!userSelection.Contains('-'))
-            {
-                Console.WriteLine("Speed factor for final lap? (Enter a value from 1.00-1.30)");
-                double speedFactor = Double.Parse(Console.ReadLine());            
-                Console.WriteLine("Would you like to specify a start/end time for the final lap? (Y/N)");
-
-                if(Console.ReadLine().ToLower().Equals("y"))
+                foreach(KeyValuePair<string, string> kvp in Tracks.trackNames)
                 {
-                    int startTime = 0;
-                    int endTime = Int32.MaxValue;
-                    Console.WriteLine("Enter a start time in seconds (this is relative to your already-cut song).");
-                    startTime = Int32.Parse(Console.ReadLine());
-                    Console.WriteLine("Enter an end time in seconds (leave this blank if you want to keep the rest of the song)");
-                    string end = Console.ReadLine();
-                    if(!string.IsNullOrEmpty(end))
+                    Console.WriteLine($"| {kvp.Key}");
+                }
+
+                Console.WriteLine("--------------------");
+                Console.Write("Track: ");
+                string userSelection = Console.ReadLine();
+                string trackFilename = "";
+                try 
+                {
+                    trackFilename = Tracks.getFilename(userSelection);
+                }
+                catch(System.ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey(intercept: true);
+                    Environment.Exit(1);
+                }
+
+                string current = System.AppContext.BaseDirectory;
+                
+                if(!Directory.GetCurrentDirectory().Contains("system32"))
+                {
+                    current = Directory.GetCurrentDirectory();
+                }
+
+                int choice = 0;
+                string path = "";
+                string finalpath = "";
+                Console.WriteLine("Enter an input method:\n [1] Youtube URL\n [2] Audio file");
+
+                try
+                {
+                    choice = Int32.Parse(Console.ReadLine());
+                    path = (choice == 1) ? await youtubeURLCase(trackFilename) : (choice == 2) ? await audioFileCase(trackFilename, Directory.EnumerateFiles(current).ToList()) : throw new InvalidDataException("Invalid input.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ReadKey(intercept: true);
+                    Environment.Exit(1);
+                }
+
+
+                Console.WriteLine("How much do you want to increase the volume? (Enter a value from 0-10 (dB))");
+                int decibelIncrease = Int32.Parse(Console.ReadLine());
+                path = AudioHandler.adjustVolume(path, decibelIncrease);
+                string twochannelpath = path;
+                path = AudioHandler.adjustChannels(path, Tracks.getChannelCount(userSelection));
+
+                if(!userSelection.Contains('-'))
+                {
+                    Console.WriteLine("Speed factor for final lap? (Enter a value from 1.00-1.30)");
+                    double speedFactor = Double.Parse(Console.ReadLine());            
+                    Console.WriteLine("Would you like to specify a start/end time for the final lap? (Y/N)");
+
+                    if(Console.ReadLine().ToLower().Equals("y"))
                     {
-                        endTime = Int32.Parse(end);
+                        int startTime = 0;
+                        int endTime = Int32.MaxValue;
+                        Console.WriteLine("Enter a start time in seconds (this is relative to your already-cut song).");
+                        startTime = Int32.Parse(Console.ReadLine());
+                        Console.WriteLine("Enter an end time in seconds (leave this blank if you want to keep the rest of the song)");
+                        string end = Console.ReadLine();
+                        if(!string.IsNullOrEmpty(end))
+                        {
+                            endTime = Int32.Parse(end);
+                        }
+                        else
+                        {
+                            endTime = startTime + 300;
+                        }
+                        try
+                        {
+                            int indexof = path.LastIndexOf('\\');
+                            finalpath = path.Substring(0, indexof) + "\\" + trackFilename.Substring(0, trackFilename.Length-2) + "_f1_.wav"; 
+                            File.Copy(twochannelpath, finalpath);
+                            finalpath = (await AudioHandler.cutAudio(finalpath, startTime, endTime));
+                            finalpath = AudioHandler.adjustChannels(finalpath, Tracks.getChannelCount(userSelection));
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine("Press any key to exit...");
+                            Console.ReadKey(intercept:true);
+                            Environment.Exit(1);
+                        }
                     }
                     else
                     {
-                        endTime = startTime + 300;
+                        finalpath = path;
                     }
-                    try
-                    {
-                        int indexof = path.LastIndexOf('\\');
-                        finalpath = path.Substring(0, indexof) + "\\" + trackFilename.Substring(0, trackFilename.Length-2) + "_f1_.wav"; 
-                        File.Copy(twochannelpath, finalpath);
-                        finalpath = (await AudioHandler.cutAudio(finalpath, startTime, endTime));
-                        finalpath = AudioHandler.adjustChannels(finalpath, Tracks.getChannelCount(userSelection));
-                    }
-                    catch(Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                        Console.WriteLine("Press any key to exit...");
-                        Console.ReadKey(intercept:true);
-                        Environment.Exit(1);
-                    }
+                    
+                    finalpath = AudioHandler.finalLapMaker(finalpath, speedFactor);
+                    Console.WriteLine("Converting...");
+                    AudioHandler.convertToBrstm(path);
+                    AudioHandler.convertToBrstm(finalpath);
                 }
                 else
                 {
-                    finalpath = path;
+                    AudioHandler.convertToBrstm(path);
                 }
-                
-                finalpath = AudioHandler.finalLapMaker(finalpath, speedFactor);
-                Console.WriteLine("Converting...");
-                AudioHandler.convertToBrstm(path);
-                AudioHandler.convertToBrstm(finalpath);
-            }
-            else
-            {
-                AudioHandler.convertToBrstm(path);
-            }
 
-            foreach(string file in Directory.EnumerateFiles(@".\brstms"))
-            {
-                string filecheck = file.ToLower();
-                if(filecheck.EndsWith(".wav") && !filecheck.EndsWith($"_n.wav") && !filecheck.EndsWith("_f.wav")) File.Delete(file);
-            }
-            Console.WriteLine($"Finished. Your brstms are here: {Directory.GetParent(path)}");
-            Console.WriteLine("Press any key to exit...");
+                foreach(string file in Directory.EnumerateFiles(@".\brstms"))
+                {
+                    string filecheck = file.ToLower();
+                    if(filecheck.EndsWith(".wav") && !filecheck.EndsWith($"_n.wav") && !filecheck.EndsWith("_f.wav")) File.Delete(file);
+                }
+                Console.WriteLine($"Finished. Your brstms are here: {Directory.GetParent(path)}");
+                Console.WriteLine("Make another BRSTM? (y/n)");
+                cont = Console.ReadLine();
+            } while (cont.Equals("y"));
+            Console.WriteLine("Finished. Press any key to exit.");
             Console.ReadKey(intercept:true);
         }
 
